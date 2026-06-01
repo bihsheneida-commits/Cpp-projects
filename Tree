@@ -1,0 +1,206 @@
+#include <iostream>
+using namespace std;
+// Node structure
+struct Node
+{
+    int data;
+    Node* left;
+    Node* right;
+    Node(int value)
+    {
+        data = value;
+        left = NULL;
+        right = NULL;
+    }
+};
+// Insert a node
+Node* insert(Node* root, int key)
+{
+    if (root == NULL)
+        return new Node(key);
+    if (key < root->data)
+        root->left = insert(root->left, key);
+    else if (key > root->data)
+        root->right = insert(root->right, key);
+    return root;
+}
+
+// Search for a key
+bool search(Node* root, int key)
+{
+    if (root == NULL)
+        return false;
+    if (root->data == key)
+        return true;
+
+    if (key < root->data)
+        return search(root->left, key);
+
+    return search(root->right, key);
+}
+
+// Inorder Traversal
+void inorder(Node* root)
+{
+    if (root != NULL)
+    {
+        inorder(root->left);
+        cout << root->data << " ";
+        inorder(root->right);
+    }
+}
+
+// Preorder Traversal
+void preorder(Node* root)
+{
+    if (root != NULL)
+    {
+        cout << root->data << " ";
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Postorder Traversal
+void postorder(Node* root)
+{
+    if (root != NULL)
+    {
+        postorder(root->left);
+        postorder(root->right);
+        cout << root->data << " ";
+    }
+}
+
+// Find minimum node
+Node* findMin(Node* root)
+{
+    while (root && root->left != NULL)
+        root = root->left;
+
+    return root;
+}
+
+// Find maximum node
+Node* findMax(Node* root)
+{
+    while (root && root->right != NULL)
+        root = root->right;
+
+    return root;
+}
+
+// Delete a node
+Node* deleteNode(Node* root, int key)
+{
+    if (root == NULL)
+        return root;
+
+    if (key < root->data)
+        root->left = deleteNode(root->left, key);
+
+    else if (key > root->data)
+        root->right = deleteNode(root->right, key);
+
+    else
+    {
+        // Node with one child or no child
+        if (root->left == NULL)
+        {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        }
+
+        else if (root->right == NULL)
+        {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        // Node with two children
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+
+    return root;
+}
+
+int main()
+{
+    Node* root = NULL;
+    int choice, key;
+
+    do
+    {
+        cout << "\n===== BINARY SEARCH TREE MENU =====\n";
+        cout << "1. Insert\n";
+        cout << "2. Search\n";
+        cout << "3. Inorder Traversal\n";
+        cout << "4. Preorder Traversal\n";
+        cout << "5. Postorder Traversal\n";
+        cout << "6. Find Minimum\n";
+        cout << "7. Find Maximum\n";
+        cout << "8. Delete\n";
+        cout << "9. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        switch(choice)
+        {
+        case 1:
+            cout << "Enter key to insert: ";
+            cin >> key;
+            root = insert(root, key);
+            break;
+        case 2:
+            cout << "Enter key to search: ";
+            cin >> key;
+            if(search(root, key))
+                cout << "Key found.\n";
+            else
+                cout << "Key not found.\n";
+            break;
+        case 3:
+            cout << "Inorder Traversal: ";
+            inorder(root);
+            cout << endl;
+            break;
+        case 4:
+            cout << "Preorder Traversal: ";
+            preorder(root);
+            cout << endl;
+            break;
+        case 5:
+            cout << "Postorder Traversal: ";
+            postorder(root);
+            cout << endl;
+            break;
+        case 6:
+            if(root != NULL)
+                cout << "Minimum value: " << findMin(root)->data << endl;
+            else
+                cout << "Tree is empty.\n";
+            break;
+        case 7:
+            if(root != NULL)
+                cout << "Maximum value: " << findMax(root)->data << endl;
+            else
+                cout << "Tree is empty.\n";
+            break;
+        case 8:
+            cout << "Enter key to delete: ";
+            cin >> key;
+            root = deleteNode(root, key);
+            cout << "Deletion completed.\n";
+            break;
+        case 9:
+            cout << "Program terminated.\n";
+            break;
+        default:
+            cout << "Invalid choice.\n";
+        }
+    } while(choice != 9);
+    return 0;
+}
